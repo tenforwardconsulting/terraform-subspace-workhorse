@@ -15,5 +15,5 @@ provider aws {
 
 resource "aws_key_pair" "subspace" {
   key_name   = "subspace"
-  public_key = file("../../subspace.pem.pub")
+  public_key = var.subspace_public_key
 }
