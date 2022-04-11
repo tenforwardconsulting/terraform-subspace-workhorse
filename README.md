@@ -4,14 +4,36 @@ This terraform module creates a single server designed to host an entire applica
 
 It does create networking resources including a (public) VPC and an Elastic IP address for the server.
 
+# Example Usage
+
+    provider "aws" {
+      region                   = "us-east-1"
+      profile                  = "subspace-my-project"
+    }
+
+    module workhorse {
+      source = "github.com/tenforwardconsulting/terraform-subspace-workhorse"
+      project_name = "my-project"
+      project_environment = "staging"
+      aws_region = "us-east-1"
+      domain_name = "staging.example.com"
+
+
+      # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
+      instance_ami = "ami-039af3bfc52681cd5"
+      instance_user = "ubuntu"
+      instance_type = "t3.medium"
+      instance_hostname = "staging-app1"
+      instance_volume_size = 16
+    }
 
 ## Input Variables
 
-See (variables.tf)[variables.tf] for details.
+See [variables.tf] for details.
 
 ## Outputs
 
-See (outputs.tf)[outputs.tf] for details.
+See [outputs.tf] for details.
 
 ## Route 53 DNS
 

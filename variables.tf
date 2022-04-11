@@ -1,12 +1,10 @@
 # Global (e.g. include -var-file=../global.vars)
 
 variable aws_region { type = string }
-variable aws_access_key_id {}
-variable aws_secret_access_key {}
 variable project_name { type = string }
 variable project_environment { type = string }
 variable domain_name { type = string}
-
+variable subspace_public_key { type = string }
 
 # single_ec2.tf
 variable instance_type { type = string }
