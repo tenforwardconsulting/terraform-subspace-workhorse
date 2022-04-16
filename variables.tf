@@ -3,7 +3,8 @@
 variable aws_region { type = string }
 variable project_name { type = string }
 variable project_environment { type = string }
-variable domain_name { type = string}
+variable zone_id { type = string }
+variable subdomain { type = string }
 variable subspace_public_key { type = string }
 
 # single_ec2.tf
