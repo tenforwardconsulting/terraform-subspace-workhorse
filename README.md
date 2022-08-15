@@ -16,7 +16,9 @@ It does create networking resources including a (public) VPC and an Elastic IP a
       project_name = "my-project"
       project_environment = "dev"
       aws_region = "us-east-1"
-
+      subspace_public_key = file("../../subspace.pem.pub")
+      subdomain = "myproject"
+      zone_id = "" # AWS zone id if you want to autocreate DNS
 
       # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
       instance_ami = "ami-039af3bfc52681cd5"
@@ -24,6 +26,8 @@ It does create networking resources including a (public) VPC and an Elastic IP a
       instance_type = "t3.medium"
       instance_hostname = "dev-app1"
       instance_volume_size = 16
+
+      ssh_cidr_blocks = ["0.0.0.0/0"]
     }
 
 ## Input Variables
