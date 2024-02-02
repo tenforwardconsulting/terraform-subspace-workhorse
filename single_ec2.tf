@@ -5,7 +5,7 @@ resource "aws_instance" "single" {
   vpc_security_group_ids = [aws_security_group.single.id]
 
   tags = {
-    Name = "${var.project_environment} Server"
+    Name = "${var.project_name} ${var.project_environment} Server"
     Environment = var.project_environment
   }
   root_block_device {
