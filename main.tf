@@ -19,6 +19,6 @@ provider aws {
 }
 
 resource "aws_key_pair" "subspace" {
-  key_name   = "subspace"
+  key_name   = "${var.project_name} ${var.project_environment} subspace"
   public_key = var.subspace_public_key
 }
