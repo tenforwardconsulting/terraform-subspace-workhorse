@@ -20,19 +20,60 @@ It does create networking resources including a (public) VPC and an Elastic IP a
       subdomain = "myproject"
       zone_id = "" # AWS zone id if you want to autocreate DNS
 
-      # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
-      instance_ami = "ami-039af3bfc52681cd5"
       instance_user = "ubuntu"
-      instance_type = "t3.medium"
-      instance_hostname = "dev-app1"
-      instance_volume_size = 16
-
       ssh_cidr_blocks = ["0.0.0.0/0"]
+
+      instances = {
+        "1" = {
+          hostname      = "dev-app1"
+          ami           = "ami-039af3bfc52681cd5"
+          instance_type = "t3.medium"
+          volume_size   = 16
+        }
+      }
+      active_instance = "1"
     }
 
 ## Input Variables
 
 See [variables.tf] for details.
+
+## Instance slots
+
+`instances` is keyed by *slot*, and a slot is a permanent terraform state address:
+`module.workhorse.aws_instance.single["1"]`.  Slots are never renamed or renumbered,
+which is what lets `subspace upgrade` stand a second server up beside the first one,
+cut over to it, and destroy the original without terraform ever proposing to replace
+the instance that is serving traffic.
+
+`active_instance` names the slot that owns the Elastic IP.  Because the EIP itself is
+never replaced, moving it is the entire cutover: the Route53 record and the letsencrypt
+certificate both keep pointing at the same address.
+
+## Upgrading from v1.x
+
+v2.0.0 replaces `instance_ami`, `instance_type`, `instance_volume_size` and
+`instance_hostname` with the `instances` map, so the migration is a config rewrite plus
+one `terraform state mv`:
+
+    instances = {
+      "1" = {
+        hostname      = "dev-app1"    # whatever instance_hostname was
+        ami           = "ami-..."     # whatever instance_ami was
+        instance_type = "t3.medium"
+        volume_size   = 16
+      }
+    }
+    active_instance = "1"
+
+    terraform state mv 'module.workhorse.aws_instance.single' 'module.workhorse.aws_instance.single["1"]'
+
+`terraform plan` must then report no changes.  A plan that proposes *replacing* the
+instance means the migration is wrong; do not apply it.
+
+`aws_eip.single` also drops its inline `instance` attribute, which duplicated (and
+could fight with) `aws_eip_association.eip_assoc`.  The association resource is now the
+only thing that binds the EIP to an instance.
 
 ## Outputs
 
