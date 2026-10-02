@@ -55,3 +55,19 @@ resource "aws_security_group" "single" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+# Exists only while `subspace upgrade --cutover` is copying the database
+resource "aws_security_group" "instance_ssh" {
+  count       = var.allow_instance_ssh ? 1 : 0
+  name        = "${var.project_name} ${var.project_environment} instance ssh"
+  description = "subspace upgrade: temporary ssh between instances for the db copy"
+  vpc_id      = aws_default_vpc.default.id
+
+  ingress {
+    description     = "SSH from instances in this environment"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.single.id]
+  }
+}
